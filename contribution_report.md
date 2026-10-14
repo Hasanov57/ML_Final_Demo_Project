@@ -1,30 +1,16 @@
 # Contribution Report
 
-Keep this file in the repo root. It is checked at the demo. Be honest and
-specific — "helped with everything" is not acceptable. One row per member,
-plus a short per-member paragraph.
+Fill this with the **actual** work completed before submission so it matches Git history and the demo.
 
-## Team
-| Member (Surname, Name) | GitHub handle | Main responsibilities |
-|------------------------|---------------|-----------------------|
-| ---                    | ---           | ---                   |
-| ---                    | ---           | ---                   |
-| ---                    | ---           | ---                   |
+| Member | Primary ownership | Shared work |
+|---|---|---|
+| Member 1 | Decision Tree implementation, tree experiments, final integration | Testing, report review, presentation/demo preparation |
+| Member 2 | Data preprocessing, EDA, evaluation metrics | Testing, report review, presentation/demo preparation |
+| Member 3 | Pegasos SVM, RFF extension, SVM experiments/baselines | Testing, report review, presentation/demo preparation |
 
-## Per-member summary
-**Surname, Name —** 2–4 sentences: what you designed, implemented, wrote,
-and debugged. Reference concrete files/PRs/commits.
+All members should understand the full end-to-end pipeline, even when a module has a primary owner.
 
-**Surname, Name —** ...
-
-**Surname, Name —** ...
-
-## Rough effort split
-Give an approximate percentage per member (should sum to ~100%) and note any
-imbalance and why.
-
-| Member | Approx. % |
-|--------|-----------|
-| ---    | ---       |
-| ---    | ---       |
-| ---    | ---       |
+## Final verification before submission
+- Replace Member 1/2/3 with real names.
+- Update responsibilities if the actual work changed.
+- Do not claim work that is inconsistent with Git history or the demo.

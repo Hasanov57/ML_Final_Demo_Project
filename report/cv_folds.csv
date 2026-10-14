@@ -1,0 +1,22 @@
+fold,model,metric,value
+1,Our Tree Regressor,RMSE,344294.5426585987
+1,sklearn Tree Regressor,RMSE,344513.9352939566
+1,Our Tree Classifier,F1,0.8886615515771525
+1,sklearn Tree Classifier,F1,0.889798703514159
+1,Our Linear Pegasos,F1,0.8325915782266348
+1,Our RFF Pegasos,F1,0.8073635765943459
+1,sklearn SGD hinge,F1,0.8309043020193152
+2,Our Tree Regressor,RMSE,386473.3434320812
+2,sklearn Tree Regressor,RMSE,386536.5782306849
+2,Our Tree Classifier,F1,0.8973471741637832
+2,sklearn Tree Classifier,F1,0.9003120381014945
+2,Our Linear Pegasos,F1,0.8177849636216653
+2,Our RFF Pegasos,F1,0.80896
+2,sklearn SGD hinge,F1,0.8333615293520554
+3,Our Tree Regressor,RMSE,363555.8550981637
+3,sklearn Tree Regressor,RMSE,362950.81078785233
+3,Our Tree Classifier,F1,0.8986236992279288
+3,sklearn Tree Classifier,F1,0.9008222856183925
+3,Our Linear Pegasos,F1,0.8145568518196064
+3,Our RFF Pegasos,F1,0.813337801608579
+3,sklearn SGD hinge,F1,0.832847591290931
