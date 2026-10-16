@@ -141,7 +141,7 @@ def overview():
     a.subheader("1. How much is a property?")
     a.write("The regression tree predicts a listing price in AZN. We compare the guess with the actual price.")
     b.subheader("2. Standard or Premium?")
-    b.write("The classification models predict whether the price is at least 210,000 AZN, the median learned from training listings.")
+    b.write("The classification models predict whether the price is above 210,000 AZN, the median learned from training listings. A listing exactly at the threshold is Standard.")
     st.subheader("The result in plain language")
     st.write(
         "Our classification tree distinguishes Standard from Premium listings well: its F1 score is about **0.91 out of 1**. "
