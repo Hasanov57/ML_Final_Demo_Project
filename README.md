@@ -22,7 +22,8 @@ The main Decision Tree and SVM are implemented from scratch with NumPy. scikit-l
 │   └── run_all.py             # reproduces experiments/results/figures
 ├── report/
 │   ├── report.tex
-│   ├── report.pdf             # current generated draft
+│   ├── report_revised.html    # optional HTML preview of the report
+│   ├── report.pdf             # final two-column PDF compiled from report.tex
 │   ├── results.csv
 │   ├── cv_summary.csv
 │   ├── experiment_results.csv
@@ -43,11 +44,18 @@ data/bina_az_sale.csv
 The raw dataset is intentionally excluded from Git.
 
 ## Reproduce everything
-Create/activate a virtual environment, install requirements, then run from the repository root:
+Use Python 3.12 for the pinned dependencies. On Windows PowerShell, create the
+virtual environment once if `.venv` does not already exist:
 
-```bash
-pip install -r requirements.txt
-python -m src.run_all
+```powershell
+py -3.12 -m venv .venv
+```
+
+Then install and run from the repository root using that environment's Python:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m src.run_all
 ```
 
 The command performs:
@@ -64,6 +72,13 @@ The command performs:
 11. test metrics, figures, and 3-fold uncertainty on a fixed-seed development subset.
 
 Generated outputs are written under `report/`.
+
+The submitted two-column report PDF was compiled from `report/report.tex`, which
+uses the official self-contained IEEE-style template. After generating figures,
+run `tectonic report.tex` from the `report/` directory to rebuild it (or use
+`pdflatex` twice). `report/report_revised.html` is an optional HTML preview.
+The three PNG figures referenced by `report.tex` are kept in Git; the other
+generated figures can be recreated with `python -m src.run_all`.
 
 ## Current reproducible results
 With seed `42` on the supplied dataset version:
@@ -110,11 +125,23 @@ The experiment CSV also contains epoch and schedule sweeps, margin widths, objec
 ```bash
 python -m pytest -q
 ```
-Current core suite: **6 tests**.
+Current core suite: **7 tests**. Verified in a fresh Python 3.12.10 environment on 16 October 2026; the full pipeline completed and reproduced the headline metrics. Fit/predict timings vary with machine load.
+
+## Optional visual demo
+Using the same Python 3.12 virtual environment, install the separate UI requirement
+and launch Streamlit from the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-ui.txt
+.\.venv\Scripts\python.exe -m streamlit run app.py
+```
+
+The dashboard reads the local CSV and generated files in `report/`. Run
+`python -m src.run_all` to refresh result tables and figures. The example prediction
+trains the project's own final models on the training split when requested; it does not
+change the core pipeline or its results.
 
 ## Before final submission
-- Replace `Team Member 1/2/3` in `report/report.tex` with the real names and rebuild the PDF.
-- Complete `contribution_report.md` according to actual work/commits.
-- Add final slides PDF.
-- Run `python -m src.run_all` from a clean environment.
-- Tag the final Git commit as `v1.0-final`.
+- Confirm that all three members understand their own code, the shared pipeline, the reported metrics, and the limitations for the live demo.
+- Merge each member's work into the main submission repository, commit the final report and slides, and create the `v1.0-final` tag on that final commit.
+- Submit the main repository link, `report/report.pdf`, and `presentation/bina_az_presentation.pdf` on Moodle before the deadline. One member submits for the whole team.

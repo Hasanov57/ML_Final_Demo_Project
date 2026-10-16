@@ -1,0 +1,2 @@
+# Install alongside requirements.txt for the optional presentation UI.
+streamlit>=1.66,<2

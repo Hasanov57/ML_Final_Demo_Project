@@ -51,6 +51,15 @@ class TestCore(unittest.TestCase):
             self.assertTrue(np.isfinite(model.margin_width()))
             self.assertEqual(len(model.predict(X)), len(y))
 
+    def test_svm_logged_objective_matches_augmented_update(self):
+        X = np.array([[0.0], [2.0]])
+        model = PegasosSVM(lambda_=0.5)
+        model.w = np.array([2.0])
+        model.b = 3.0
+        # Margins are 3 and 7 for labels +1; hinge loss is zero.
+        expected = 0.5 * 0.5 * (2.0**2 + 3.0**2)
+        self.assertAlmostEqual(model._objective(X, np.ones(2)), expected)
+
     def test_metrics(self):
         y = np.array([0, 0, 1, 1])
         p = np.array([0, 1, 1, 1])

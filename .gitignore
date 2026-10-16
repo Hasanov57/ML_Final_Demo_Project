@@ -14,7 +14,15 @@ env/
 # --- Generated outputs ---
 report/figures/*.pdf
 report/figures/*.png
+!report/figures/tree_classification_depth_sweep.png
+!report/figures/svm_convergence.png
+!report/figures/tree_feature_importance.png
 !report/figures/.gitkeep
+report/*-page-*.png
+report/report_page*_check.png
+report/report_revised.pdf
+.codex-presentation-build/
+.codex-report-chrome/
 *.log
 *.aux
 *.out

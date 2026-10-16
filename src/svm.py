@@ -92,10 +92,16 @@ class PegasosSVM:
         return self.eta0  # constant
 
     def _objective(self, X, y_pm1):
-        """Regularised hinge-loss objective J(w,b)."""
+        """Hinge loss with L2 penalty on the augmented vector (w, b).
+
+        The Pegasos update shrinks and projects that whole vector, including
+        the appended bias coordinate, so the logged objective uses the same
+        regularisation as the actual training step.
+        """
         scores = X @ self.w + self.b
         hinge = np.maximum(0.0, 1.0 - y_pm1 * scores)
-        return float(0.5 * self.lambda_ * np.dot(self.w, self.w) + hinge.mean())
+        squared_norm = np.dot(self.w, self.w) + self.b * self.b
+        return float(0.5 * self.lambda_ * squared_norm + hinge.mean())
 
     def _single_update(self, theta, xi, yi, t, radius):
         """One projected stochastic sub-gradient update."""

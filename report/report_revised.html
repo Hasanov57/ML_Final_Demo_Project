@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>From-Scratch Decision Trees and Pegasos SVM for Bina.az Real-Estate Modelling</title>
+<style>
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: white; }
+body { font-family: "Times New Roman", Times, serif; color: #111; }
+.page { width: 210mm; height: 297mm; position: relative; padding: 17mm 17mm 14mm; break-after: page; page-break-after: always; overflow: hidden; }
+.page:last-child { break-after: auto; page-break-after: auto; }
+.heading { text-align: center; margin: 0 0 6mm; }
+.title { font-size: 17.5pt; line-height: 1.08; font-weight: bold; max-width: 165mm; margin: 0 auto 3mm; }
+.authors { font-size: 10.5pt; margin: 0 0 1.5mm; }
+.affiliation { font-size: 9pt; font-style: italic; }
+.abstract { font-size: 8.8pt; line-height: 1.16; text-align: justify; margin: 0 0 1.7mm; }
+.keywords { font-size: 8.5pt; line-height: 1.15; margin-bottom: 5.5mm; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; column-gap: 7.5mm; }
+.col { min-width: 0; font-size: 9pt; line-height: 1.18; text-align: justify; }
+.col p { margin: 0 0 2.2mm; text-indent: 3.5mm; }
+.col p.noindent, .col p.afterhead { text-indent: 0; }
+h2 { font-size: 10.4pt; text-align: center; font-weight: normal; font-variant: small-caps; letter-spacing: .15pt; margin: 3.3mm 0 2.1mm; }
+h2:first-child { margin-top: 0; }
+h3 { font-size: 9.5pt; font-style: italic; font-weight: normal; margin: 2.5mm 0 1mm; }
+table { width: 100%; border-collapse: collapse; margin: 2mm 0 3mm; font-size: 8.25pt; line-height: 1.17; }
+caption { caption-side: top; text-align: center; font-size: 8.5pt; margin-bottom: 1.2mm; }
+thead tr { border-top: 1px solid #222; border-bottom: .6px solid #222; }
+tbody tr:last-child { border-bottom: 1px solid #222; }
+th, td { padding: 1.1mm .8mm; vertical-align: top; }
+th { font-weight: normal; text-align: left; }
+td.num, th.num { text-align: right; white-space: nowrap; }
+.smalltable { font-size: 7.7pt; }
+.smalltable th, .smalltable td { padding: .9mm .6mm; }
+.eq { text-align: center; font-size: 10.2pt; margin: 3.2mm 0; white-space: nowrap; }
+.eq .no { float: right; font-size: 8.4pt; }
+.figure { margin: 2.2mm 0 3mm; text-align: center; }
+.figure img { max-width: 100%; display: block; margin: 0 auto; }
+.figure figcaption { text-align: left; font-size: 8pt; line-height: 1.14; margin-top: .6mm; }
+.fig-sm img { height: 49mm; width: auto; }
+.fig-md img { height: 58mm; width: auto; }
+.compact p { margin-bottom: 1.7mm; }
+.refs { font-size: 8.1pt; line-height: 1.16; text-align: left; }
+.refs p { text-indent: 0; padding-left: 5mm; text-indent: -5mm; margin: 0 0 2mm; }
+.footer { position: absolute; bottom: 7mm; left: 17mm; right: 17mm; text-align: center; font-size: 8pt; }
+.url { overflow-wrap: anywhere; color: #111; text-decoration: none; }
+.note { font-size: 7.8pt; line-height: 1.12; }
+</style>
+</head>
+<body>
+
+<section class="page">
+  <header class="heading">
+    <div class="title">From-Scratch Decision Trees and Pegasos SVM<br>for Bina.az Real-Estate Modelling</div>
+    <div class="authors">Samir Hasanov, &nbsp;&nbsp; Mammadaliyev Ramil, &nbsp;&nbsp; Elmin Seyidov</div>
+    <div class="affiliation">MLE-AI-201 Machine Learning, AI Academy — Cohort II</div>
+  </header>
+  <div class="abstract"><b><i>Abstract—</i></b> We study 100,775 Bina.az sale records as two supervised tasks: sale-price regression and price-tier classification. After deduplicating repeated listing snapshots and applying fixed plausibility rules, 64,128 listings remain. We build 29 numeric features and implement a decision tree in NumPy for both tasks, plus a linear Pegasos SVM and a random Fourier feature (RFF) extension for classification. The premium threshold of 210,000 AZN and SVM scaling statistics come from training data only; model settings are chosen on validation data. On the held-out test set, our tree classifier reaches F1 = 0.9099 and ROC-AUC = 0.9630, close to scikit-learn's tree (F1 = 0.9103). Linear Pegasos reaches F1 = 0.8228, while RFF lowers it to 0.8101. The regression tree reaches RMSE = 310,716 AZN and R² = 0.5921. Classification is strong, but price errors remain large for the most expensive listings. These results show that the hand-built models are useful learning baselines, while remaining sensitive to model choice and the long-tailed target. Submission repository: <a class="url" href="https://github.com/Hasanov57/Bina.az_ML_Final_Project">github.com/Hasanov57/Bina.az_ML_Final_Project</a> (planned tag v1.0-final).</div>
+  <div class="keywords"><b><i>Index Terms—</i></b> decision tree, SVM, Pegasos, random Fourier features, real estate, regression, classification.</div>
+  <div class="cols">
+    <div class="col">
+      <h2>I. Introduction</h2>
+      <p class="afterhead">The AI Academy project asks us to implement a decision tree and a support-vector machine from first principles, then compare them fairly with scikit-learn [1]. The Bina.az sale dataset [2] is suitable because prices depend on interacting property and location features, and the scraped rows require careful cleaning.</p>
+      <p>Task A predicts sale price in AZN with a regression tree. Task B classifies each listing as Standard or Premium with a tree classifier and SVM. The two tasks share the same cleaned records and feature matrix. Our focus is algorithm correctness, leakage control, and interpretable experiments rather than deployment as a pricing service.</p>
+      <h2>II. Data and Preprocessing</h2>
+      <p class="afterhead">The raw UTF-8 CSV has 100,775 rows and 51 columns. We keep only AZN listings, retain the latest scraped snapshot per listing URL, parse Azerbaijani numeric fields, and apply fixed plausibility bounds to price, area, floors, land size, and Azerbaijan coordinates. This leaves 64,128 listings. The rules remove obvious scrape or entry errors without estimating cutoffs from the held-out test set.</p>
+      <table>
+        <caption>Table 1. Dataset after cleaning.</caption>
+        <thead><tr><th>Property</th><th class="num">Value</th></tr></thead>
+        <tbody>
+          <tr><td>Raw rows</td><td class="num">100,775</td></tr>
+          <tr><td>Cleaned listings</td><td class="num">64,128</td></tr>
+          <tr><td>Numeric model features</td><td class="num">29</td></tr>
+          <tr><td>Train / validation / test</td><td class="num">44,890 / 9,619 / 9,619</td></tr>
+          <tr><td>Premium threshold</td><td class="num">210,000 AZN</td></tr>
+          <tr><td>Premium share: train / val / test</td><td class="num">49.6% / 49.4% / 49.4%</td></tr>
+        </tbody>
+      </table>
+      <p>Area, rooms, floor numbers, land area, latitude, and longitude become numeric features. Missing structural values become zero with explicit missing indicators. Category and selected city levels are encoded with fixed one-hot columns; repair, deed, and mortgage flags become binary. Identifiers, raw addresses, URLs, and free text are excluded. Crucially, <i>unit_price</i> and <i>total_price</i> are removed because they encode the target price.</p>
+      <p>Exploration shows a strongly right-skewed price distribution. Larger area generally accompanies higher price, but listings of similar size still vary widely. The training-median tier definition yields near-balanced classes.</p>
+    </div>
+    <div class="col">
+      <p class="noindent">We first select 70% of rows for training. The training-price median, 210,000 AZN, defines Premium as price above that threshold. We then stratify the remaining rows into 15% validation and 15% test sets using this fixed label. Premium shares are 0.496, 0.494, and 0.494 respectively. Standardization for SVM uses training means and standard deviations only.</p>
+      <h2>III. Algorithms</h2>
+      <h3>A. Decision Tree</h3>
+      <p class="afterhead">Our NumPy tree sorts each numeric feature at a node and tests thresholds between adjacent distinct values. It chooses the split with the largest weighted impurity decrease:</p>
+      <div class="eq">ΔI = I(P) − (N<sub>L</sub>/N)I(L) − (N<sub>R</sub>/N)I(R). <span class="no">(1)</span></div>
+      <p>Classification uses Gini impurity or entropy; regression uses variance (MSE). Splitting stops according to <i>max_depth</i>, <i>min_samples_split</i>, <i>min_samples_leaf</i>, and <i>min_impurity_decrease</i>. Leaves predict the majority class or mean target; class probabilities use leaf frequencies. A deterministic toy example matches the scikit-learn root feature, threshold, and predictions.</p>
+      <h3>B. Pegasos SVM and RFF</h3>
+      <p class="afterhead">For labels y ∈ {−1,+1}, the linear classifier minimizes regularized hinge loss with stochastic Pegasos updates [3]. The assignment's augmented-feature version appends a constant 1 to each input, so the bias participates in shrinkage and projection. At update t, η<sub>t</sub> = 1/(λt). If y<sub>i</sub>f(x<sub>i</sub>) &lt; 1, the update adds η<sub>t</sub>y<sub>i</sub>x<sub>i</sub>; otherwise it applies only shrinkage.</p>
+      <div class="eq" style="white-space:normal">J(w,b) = (λ/2)(‖w‖² + b²)<br>+ mean<sub>i</sub> max(0, 1 − y<sub>i</sub>f(x<sub>i</sub>)). <span class="no">(2)</span></div>
+      <p>We report ‖w‖, margin width 2/‖w‖, and training points with y<sub>i</sub>f(x<sub>i</sub>) ≤ 1. The bias penalty matches the augmented-feature update, so the logged objective and convergence plot use the same function as training. For nonlinear features, RFF approximates an RBF mapping with cosine features before the same linear solver.</p>
+    </div>
+  </div>
+  <div class="footer">1</div>
+</section>
+
+<section class="page">
+  <div class="cols">
+    <div class="col">
+      <h2>IV. Experimental Design</h2>
+      <p class="afterhead">We model log(1 + price) for regression and invert predictions before computing price-scale RMSE, MAE, and R². Classification uses precision, recall, F1, ROC-AUC, and confusion matrices. The common seed is 42. Hyperparameters are selected on validation data only; the test split is reserved for final reporting.</p>
+      <p>The regression tree sweeps depth 4–12 and leaf size 5–100. The classifier compares Gini and entropy, then depth and leaf size. Pegasos tests four λ values, 1–5 epochs, and three learning schedules. RFF tests γ = 0.03, 0.1, and 0.3. Selected settings are regression depth 12 / leaf 5, classification Gini / depth 11 / leaf 5, linear Pegasos λ = 0.001 / 3 epochs, and RFF γ = 0.1 / 120 components.</p>
+      <p>Reference models use matched decision-tree settings where possible and a <i>StandardScaler + SGDClassifier(loss='hinge')</i> pipeline for linear classification. Scikit-learn is used only for comparison, not as either main implementation.</p>
+      <h2>V. Held-Out Results</h2>
+      <table class="smalltable">
+        <caption>Table 2. Price regression on the 9,619-row test set (AZN).</caption>
+        <thead><tr><th>Model</th><th class="num">RMSE</th><th class="num">MAE</th><th class="num">R²</th></tr></thead>
+        <tbody>
+          <tr><td>Our tree</td><td class="num">310,716</td><td class="num">87,181</td><td class="num">0.5921</td></tr>
+          <tr><td>sklearn tree</td><td class="num">299,329</td><td class="num">86,475</td><td class="num">0.6215</td></tr>
+        </tbody>
+      </table>
+      <table class="smalltable">
+        <caption>Table 3. Premium classification on the same test set.</caption>
+        <thead><tr><th>Model</th><th class="num">Prec.</th><th class="num">Recall</th><th class="num">F1</th><th class="num">AUC</th></tr></thead>
+        <tbody>
+          <tr><td>Our tree</td><td class="num">0.9059</td><td class="num">0.9139</td><td class="num">0.9099</td><td class="num">0.9630</td></tr>
+          <tr><td>sklearn tree</td><td class="num">0.9068</td><td class="num">0.9139</td><td class="num">0.9103</td><td class="num">0.9629</td></tr>
+          <tr><td>Linear Pegasos</td><td class="num">0.8439</td><td class="num">0.8027</td><td class="num">0.8228</td><td class="num">0.9083</td></tr>
+          <tr><td>RFF Pegasos</td><td class="num">0.8141</td><td class="num">0.8061</td><td class="num">0.8101</td><td class="num">0.8936</td></tr>
+          <tr><td>sklearn SGD</td><td class="num">0.8457</td><td class="num">0.8069</td><td class="num">0.8259</td><td class="num">0.9077</td></tr>
+        </tbody>
+      </table>
+      <p>The custom classifier closely matches the sklearn tree (F1 gap 0.0005). The regression tree has useful signal but substantially larger errors, especially for high-priced listings. RFF did not beat the linear SVM under the tested feature dimension and bandwidths.</p>
+    </div>
+    <div class="col">
+      <h2>VI. Robustness and Runtime</h2>
+      <p class="afterhead">Three-fold cross-validation on a fixed-seed 18,000-row subset of the development data estimates variation without touching the final test set. It uses the selected settings and is a practical uncertainty check rather than a full nested search.</p>
+      <table class="smalltable">
+        <caption>Table 4. Cross-validation mean ± standard deviation.</caption>
+        <thead><tr><th>Model</th><th class="num">Metric</th><th class="num">Mean ± SD</th></tr></thead>
+        <tbody>
+          <tr><td>Our tree classifier</td><td class="num">F1</td><td class="num">0.8949 ± 0.0054</td></tr>
+          <tr><td>sklearn tree classifier</td><td class="num">F1</td><td class="num">0.8970 ± 0.0062</td></tr>
+          <tr><td>Linear Pegasos</td><td class="num">F1</td><td class="num">0.8216 ± 0.0096</td></tr>
+          <tr><td>RFF Pegasos</td><td class="num">F1</td><td class="num">0.8099 ± 0.0031</td></tr>
+          <tr><td>sklearn SGD</td><td class="num">F1</td><td class="num">0.8324 ± 0.0013</td></tr>
+          <tr><td>Our tree regressor</td><td class="num">RMSE</td><td class="num">364,775 ± 21,116</td></tr>
+          <tr><td>sklearn tree regressor</td><td class="num">RMSE</td><td class="num">364,667 ± 21,064</td></tr>
+        </tbody>
+      </table>
+      <p>In the validation sweep, linear Pegasos F1 rose from 0.8224 at one epoch to 0.8330 at three, while margin width changed from 0.241 to 0.335. At three epochs, Pegasos, inverse-square-root, and constant schedules produced F1 values 0.8330, 0.8000, and 0.8204, with widths 0.335, 0.789, and 0.437. The learning schedule affects both prediction and margin.</p>
+      <p>For the final linear model, ‖w‖ = 5.979 and the geometric margin width is 0.335. The margin test identifies 19,892 of 44,890 training listings as support vectors or margin violations.</p>
+      <table class="smalltable">
+        <caption>Table 5. Representative timing from the current results file.</caption>
+        <thead><tr><th>Model</th><th class="num">Fit (s)</th><th class="num">Predict (ms/1k)</th></tr></thead>
+        <tbody>
+          <tr><td>Our tree classifier</td><td class="num">1.32</td><td class="num">5.03</td></tr>
+          <tr><td>sklearn tree classifier</td><td class="num">0.18</td><td class="num">0.36</td></tr>
+          <tr><td>Linear Pegasos</td><td class="num">1.06</td><td class="num">0.070</td></tr>
+          <tr><td>RFF Pegasos</td><td class="num">1.27</td><td class="num">2.54</td></tr>
+          <tr><td>sklearn SGD pipeline</td><td class="num">0.36</td><td class="num">0.40</td></tr>
+        </tbody>
+      </table>
+      <p class="note">Timing depends on machine load. In the separate 2k-to-10k-row scaling test, tree fit time rose from 0.12 to 0.43 s and linear Pegasos from 0.05 to 0.24 s.</p>
+      <h2>VII. Error Counts</h2>
+      <table class="smalltable">
+        <caption>Table 6. Test confusion matrices (Premium is positive).</caption>
+        <thead><tr><th>Model</th><th class="num">TN</th><th class="num">FP</th><th class="num">FN</th><th class="num">TP</th></tr></thead>
+        <tbody>
+          <tr><td>Our tree</td><td class="num">4,419</td><td class="num">451</td><td class="num">409</td><td class="num">4,340</td></tr>
+          <tr><td>Linear Pegasos</td><td class="num">4,165</td><td class="num">705</td><td class="num">937</td><td class="num">3,812</td></tr>
+        </tbody>
+      </table>
+      <p class="note">The tree makes fewer false negatives and false positives than the linear model on this test split.</p>
+    </div>
+  </div>
+  <div class="footer">2</div>
+</section>
+
+<section class="page">
+  <div class="cols">
+    <div class="col compact">
+      <h2>VIII. Model Behaviour</h2>
+      <figure class="figure fig-sm"><img src="figures/tree_classification_depth_sweep.png" alt="Tree depth validation curve"><figcaption><b>Fig. 1.</b> Train and validation F1 both rise over the tested depths; the gap widens slightly, but validation F1 does not fall.</figcaption></figure>
+      <figure class="figure fig-sm"><img src="figures/svm_convergence.png" alt="Pegasos convergence"><figcaption><b>Fig. 2.</b> The recorded augmented-vector hinge-loss objective falls quickly and then stabilizes.</figcaption></figure>
+      <figure class="figure fig-sm"><img src="figures/tree_feature_importance.png" alt="Tree feature importance"><figcaption><b>Fig. 3.</b> Area and coordinates dominate impurity-decrease importance in the final classifier.</figcaption></figure>
+    </div>
+    <div class="col compact">
+      <h2>IX. Discussion and Limitations</h2>
+      <p class="afterhead">Area accounts for 58.8% of the tree's impurity-decrease importance, followed by longitude (19.6%) and latitude (9.8%). These scores describe this fitted model; they do not establish causal effects. The SVM's largest absolute standardized weight is also area. Several rare-city indicators have relatively large weights, so those coefficients should not be interpreted as stable location effects.</p>
+      <p>The custom tree is accurate for new and old apartments (about 92%) but lower for land (81.8%) and commercial objects (84.6%). Price regression is the main limitation: for the top 5% of test prices, MAE is about 773,000 AZN, versus about 49,500 AZN for the remaining 95%. The long-tailed target drives the large RMSE even with log-target training.</p>
+      <p>RFF with 120 components lowers test F1 by 0.0127 compared with linear Pegasos. More components or a broader joint search over γ and λ might help, but would increase training cost. We omit descriptions and raw addresses to keep the educational implementation manageable; richer features are future work. Fixed cleaning bounds can still leave implausible listings.</p>
+      <h2>X. Team Contributions</h2>
+      <p class="afterhead"><b>Samir Hasanov</b> implemented the from-scratch decision tree, ran its experiments, and integrated the full pipeline. <b>Mammadaliyev Ramil</b> implemented Pegasos SVM and RFF and ran the SVM experiments. <b>Elmin Seyidov</b> prepared the data, EDA, leakage checks, splitting, and evaluation metrics. The team jointly reviewed results and prepared the report and presentation.</p>
+      <h2>XI. Conclusion</h2>
+      <p class="afterhead">The from-scratch tree closely matches scikit-learn for price-tier classification, and the custom linear SVM is close to the SGD hinge baseline. Fair splitting, train-only preprocessing, and validation-only tuning make these comparisons credible. Regression remains moderate and should not be presented as a reliable valuation system.</p>
+      <h2>Tools, Data and AI Disclosure</h2>
+      <p class="afterhead">The data come from the Bina.az Sale Project [2]. NumPy and pandas support data operations, matplotlib generates figures, and scikit-learn supplies reference models. AI assistance helped draft code and prose, explain methods, and debug. The team reviewed and tested the submitted work and remains responsible for defending it.</p>
+      <h2>References</h2>
+      <div class="refs">
+        <p>[1] F. Pedregosa et al., “Scikit-learn: Machine Learning in Python,” <i>JMLR</i>, vol. 12, pp. 2825–2830, 2011.</p>
+        <p>[2] S. Memmedli, “Bina.az Sale Project,” Kaggle dataset, <a class="url" href="https://www.kaggle.com/datasets/sehriyarmemmedli/binaaz-sale-project">kaggle.com/datasets/sehriyarmemmedli/binaaz-sale-project</a>.</p>
+        <p>[3] S. Shalev-Shwartz, Y. Singer, N. Srebro, and A. Cotter, “Pegasos: primal estimated sub-gradient solver for SVM,” <i>Mathematical Programming</i>, vol. 127, pp. 3–30, 2011.</p>
+      </div>
+      <p class="note noindent"><b>Code:</b> <a class="url" href="https://github.com/Hasanov57/Bina.az_ML_Final_Project">https://github.com/Hasanov57/Bina.az_ML_Final_Project</a></p>
+    </div>
+  </div>
+  <div class="footer">3</div>
+</section>
+
+</body>
+</html>

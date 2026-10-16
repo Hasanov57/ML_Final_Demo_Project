@@ -1,16 +1,11 @@
 # Contribution Report
 
-Fill this with the **actual** work completed before submission so it matches Git history and the demo.
+The team completed one shared pipeline. Each member had a primary technical area and also participated in reviewing results and preparing the final report and presentation.
 
 | Member | Primary ownership | Shared work |
 |---|---|---|
-| Member 1 | Decision Tree implementation, tree experiments, final integration | Testing, report review, presentation/demo preparation |
-| Member 2 | Data preprocessing, EDA, evaluation metrics | Testing, report review, presentation/demo preparation |
-| Member 3 | Pegasos SVM, RFF extension, SVM experiments/baselines | Testing, report review, presentation/demo preparation |
+| Samir Hasanov | From-scratch Decision Tree in `src/decision_tree.py`, tree experiments, pipeline integration in `src/run_all.py` | Testing, debugging, baseline comparison, report and presentation review |
+| Mammadaliyev Ramil | From-scratch Pegasos SVM and Random Fourier Features in `src/svm.py`, SVM experiments | Testing, debugging, baseline comparison, report and presentation review |
+| Elmin Seyidov | Data cleaning and feature preparation in `src/data_prep.py`, EDA, splitting and evaluation metrics in `src/evaluate.py` | Testing, debugging, results interpretation, report and presentation review |
 
-All members should understand the full end-to-end pipeline, even when a module has a primary owner.
-
-## Final verification before submission
-- Replace Member 1/2/3 with real names.
-- Update responsibilities if the actual work changed.
-- Do not claim work that is inconsistent with Git history or the demo.
+All three members should be able to explain the full pipeline, the reported metrics, and the limitations during the demo.

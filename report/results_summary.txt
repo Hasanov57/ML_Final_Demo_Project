@@ -9,13 +9,13 @@ Linear SVM: lambda=0.001, epochs=3, schedule=pegasos, eta0=0.01, ||w||=5.978716,
 RFF: gamma=0.1, components=120
 
           task                   model          RMSE          MAE       R2  Accuracy  Precision   Recall       F1  ROC_AUC  fit_seconds  predict_seconds  predict_ms_per_1000
-    regression      Our Tree Regressor 310715.640673 87180.870078 0.592120       NaN        NaN      NaN      NaN      NaN     1.177521         0.022971             2.388044
-    regression  sklearn Tree Regressor 299328.625759 86475.479718 0.621468       NaN        NaN      NaN      NaN      NaN     0.189067         0.001956             0.203389
-classification     Our Tree Classifier           NaN          NaN      NaN  0.910594   0.905865 0.913877 0.909853 0.963046     1.256191         0.054277             5.642707
-classification sklearn Tree Classifier           NaN          NaN      NaN  0.911113   0.906812 0.913877 0.910330 0.962931     0.194407         0.003295             0.342572
-classification      Our Linear Pegasos           NaN          NaN      NaN  0.829296   0.843923 0.802695 0.822793 0.908263     1.068566         0.000336             0.034962
-classification         Our RFF Pegasos           NaN          NaN      NaN  0.813390   0.814122 0.806064 0.810073 0.893566     1.278661         0.024172             2.512922
-classification       sklearn SGD hinge           NaN          NaN      NaN  0.831999   0.845729 0.806907 0.825862 0.907692     0.372911         0.003902             0.405697
+    regression      Our Tree Regressor 310715.640673 87180.870078 0.592120       NaN        NaN      NaN      NaN      NaN     1.125546         0.025449             2.645691
+    regression  sklearn Tree Regressor 299328.625759 86475.479718 0.621468       NaN        NaN      NaN      NaN      NaN     0.205305         0.001944             0.202110
+classification     Our Tree Classifier           NaN          NaN      NaN  0.910594   0.905865 0.913877 0.909853 0.963046     1.323877         0.048414             5.033122
+classification sklearn Tree Classifier           NaN          NaN      NaN  0.911113   0.906812 0.913877 0.910330 0.962931     0.181921         0.003431             0.356659
+classification      Our Linear Pegasos           NaN          NaN      NaN  0.829296   0.843923 0.802695 0.822793 0.908263     1.059365         0.000671             0.069779
+classification         Our RFF Pegasos           NaN          NaN      NaN  0.813390   0.814122 0.806064 0.810073 0.893566     1.271252         0.024427             2.539505
+classification       sklearn SGD hinge           NaN          NaN      NaN  0.831999   0.845729 0.806907 0.825862 0.907692     0.360738         0.003874             0.402724
 
 3-fold CV on fixed-seed development subset (n<= 18000, mean ± std):
 Our Linear Pegasos | F1: 0.821644 ± 0.009617
